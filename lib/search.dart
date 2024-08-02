@@ -57,25 +57,30 @@ class _SearchState extends State<Search> {
               )
             ],
           ),
-          Row(
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter your email',
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your email',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("search"),
-                style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
-              )
-            ],
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text("search"),
+                  style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
+                )
+              ],
+            ),
           ),
         ],
       ),
