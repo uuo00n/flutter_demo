@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,10 +12,9 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-
   var userToken = '';
+  var ListData = [];
   final TextEditingController _keyboard = TextEditingController();
-
 
   @override
   void initState() {
@@ -51,7 +51,8 @@ class _SearchState extends State<Search> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_keyboard.text)));
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(_keyboard.text)));
                   },
                   child: Text("search"),
                   style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
@@ -59,11 +60,32 @@ class _SearchState extends State<Search> {
               ],
             ),
           ),
-          Row(
-            children: [
-
-            ],
-          )
+          Expanded(
+              child: ListView.builder(
+            itemCount: ListData.length,
+            itemBuilder: (BuildContext cxt, int i) {
+              final item = ListData[i];
+              var url = "http://192.168.1.100:10001/" + item['imgUrl'];
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [Text('快递名称：' + item['name'])],
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          Text('联系电话：'+item['phone'])
+                        ],),
+                        Image.network(url,width: 180,height: 180,)
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          ))
         ],
       ),
     );
@@ -75,13 +97,11 @@ class _SearchState extends State<Search> {
     var body = jsonEncode({"username": "hjb", "password": "hjb"});
     var response = await http.post(url, body: body, headers: headers);
     var rsp = jsonDecode(utf8.decode(response.bodyBytes));
-    print("请求token："+rsp['token']);
     setState(() {
       userToken = rsp['token'];
     });
-    print("内部存储token"+userToken);
-    if(response.statusCode == 200){
-
+    print("内部存储token" + userToken);
+    if (response.statusCode == 200) {
       if (rsp['code'] == 200 && userToken != null) {
         getCompanyListData();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -92,21 +112,24 @@ class _SearchState extends State<Search> {
           content: Text('登录失败！原因：' + rsp['msg']),
         ));
       }
-    }else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('网络错误请检查网络环境'),
       ));
     }
-
   }
 
   Future<void> getCompanyListData() async {
-    var url = Uri.parse("http://192.168.1.100:8080/city/api/logistics-inquiry/logistics_company/list");
-    var header = {
-      "Authorization":userToken
-    };
-    var response = await http.get(url,headers: header);
+    var url = Uri.parse(
+        "http://192.168.1.100:8080/city/api/logistics-inquiry/logistics_company/list");
+    var header = {"Authorization": userToken};
+    var response = await http.get(url, headers: header);
     var rspbody = jsonDecode(utf8.decode(response.bodyBytes));
 
+    setState(() {
+      ListData = rspbody['data'];
+    });
+
+    print(ListData.length);
   }
 }
