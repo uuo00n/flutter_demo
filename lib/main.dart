@@ -3,6 +3,7 @@ import 'index.dart';
 import 'setting.dart';
 import 'search.dart';
 import 'newsList.dart';
+import 'demo.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -37,18 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
     });
   }
-  final pageName=[
-    "首页",
-    "列表",
-    "搜索",
-    "设置"
-  ];
+
+  final pageName = ["首页", "列表", "搜索", "设置","组件测试demo"];
 
   final pageList = [
     Home(),
     NewsList(),
     Search(),
     Setting(),
+    Demo()
   ];
 
   @override
@@ -65,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.list), label: "newslist"),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: "search"),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: "setting"),
+          BottomNavigationBarItem(icon: Icon(Icons.adb), label: "demo")
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
