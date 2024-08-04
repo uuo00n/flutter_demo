@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -25,8 +24,8 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           Row(
             children: [Text("Search")],
@@ -51,8 +50,7 @@ class _SearchState extends State<Search> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(_keyboard.text)));
+                    searchCompanyName();
                   },
                   child: Text("search"),
                   style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
@@ -66,23 +64,31 @@ class _SearchState extends State<Search> {
             itemBuilder: (BuildContext cxt, int i) {
               final item = ListData[i];
               var url = "http://192.168.1.100:10001/" + item['imgUrl'];
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [Text('快递名称：' + item['name'])],
-                  ),
-                  Container(
-                    child: Column(
-                      children: [
-                        Row(children: [
-                          Text('联系电话：'+item['phone'])
-                        ],),
-                        Image.network(url,width: 180,height: 180,)
-                      ],
+              return Container(
+                decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.black))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [Text('快递名称：' + item['name'])],
                     ),
-                  )
-                ],
+                    Container(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [Text('联系电话：' + item['phone'])],
+                          ),
+                          Image.network(
+                            url,
+                            width: 180,
+                            height: 180,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ))
@@ -125,11 +131,28 @@ class _SearchState extends State<Search> {
     var header = {"Authorization": userToken};
     var response = await http.get(url, headers: header);
     var rspbody = jsonDecode(utf8.decode(response.bodyBytes));
-
     setState(() {
       ListData = rspbody['data'];
     });
+  }
 
-    print(ListData.length);
+  Future<void> searchCompanyName() async {
+    var url = Uri.parse(
+        "http://192.168.1.100:8080/city/api/logistics-inquiry/logistics_company/list?name=" +
+            _keyboard.text);
+    var header = {"Authorization": userToken};
+    var response = await http.get(url, headers: header);
+    var rspdata = jsonDecode(utf8.decode(response.bodyBytes));
+    if (rspdata['data'].isNotEmpty) {
+      setState(() {
+        ListData = rspdata['data'];
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("搜索成功！")));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("没有相关内容！")));
+      // getCompanyListData();
+    }
   }
 }
