@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'search_obj.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -64,30 +65,39 @@ class _SearchState extends State<Search> {
             itemBuilder: (BuildContext cxt, int i) {
               final item = ListData[i];
               var url = "http://192.168.1.100:10001/" + item['imgUrl'];
-              return Container(
-                decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.black))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      children: [Text('快递名称：' + item['name'])],
-                    ),
-                    Container(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [Text('联系电话：' + item['phone'])],
-                          ),
-                          Image.network(
-                            url,
-                            width: 180,
-                            height: 180,
-                          )
-                        ],
+              return GestureDetector(
+                onTap: () {
+                  print(item['name']);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchObj(id: item['id'],token: userToken,)),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.black))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [Text('快递名称：' + item['name'])],
                       ),
-                    ),
-                  ],
+                      Container(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [Text('联系电话：' + item['phone'])],
+                            ),
+                            Image.network(
+                              url,
+                              width: 50,
+                              height: 50,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
