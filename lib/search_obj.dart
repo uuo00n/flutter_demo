@@ -43,7 +43,7 @@ class _SearchObjState extends State<SearchObj> {
           if (CompData.isNotEmpty)
             Row(
               children: [
-                Text(CompData['name']),
+                Title(color: Colors.red, child: Text(CompData['name'])),
               ],
             )
         ],
@@ -89,10 +89,10 @@ class _SearchObjState extends State<SearchObj> {
     };
     var response = await http.get(url, headers: header);
     var rsp = jsonDecode(utf8.decode(response.bodyBytes));
-    print(rsp['data'].toString());
-
     setState(() {
       CompData = rsp['data'];
     });
   }
+
+
 }
