@@ -70,7 +70,11 @@ class _SearchState extends State<Search> {
                   print(item['name']);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SearchObj(id: item['id'],token: userToken,)),
+                    MaterialPageRoute(
+                        builder: (context) => SearchObj(
+                              id: item['id'],
+                              token: userToken,
+                            )),
                   );
                 },
                 child: Container(
